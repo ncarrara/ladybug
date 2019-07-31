@@ -148,13 +148,13 @@ private:
 SerialReader reader;
 
 
-/*float tanh(float x)
+float tanhh(float x)
 {
   float x0 = exp(x);
   float x1 = 1.0 / x0;
 
   return ((x0 - x1) / (x0 + x1));
-}*/
+}
 
 
 class NeuralNetwork {
@@ -184,7 +184,7 @@ public:
    void setWeights(JsonArray weights) {
        _weights = weights;
        size_input = weights[0][0].size();
-       size_output = weights[weights.size()-1][0].size();
+       size_output = weights[weights.size()-1].size();
    }
 
 
@@ -196,30 +196,52 @@ public:
 
        float* y =NULL;
        float* x_ = x;
+       Serial.println("x_ : ");
+       Serial.println(x_[0]);
+       Serial.println(x_[1]);
+       Serial.print("_weights.size()");Serial.println(_weights.size());
        for (int idx_layer = 0; idx_layer < _weights.size(); idx_layer++) {
            JsonArray layer_weight = _weights[idx_layer];
+           Serial.print("layer_weight.size()");Serial.println(layer_weight.size());
            JsonArray layer_bias = _bias[idx_layer];
            float* y = (float *)malloc(sizeof(float) * sizeof(layer_weight));
-           for (int idx_feat = 0; idx_feat < layer_weight.size(); idx_feat++) {
-               float sum = 0.0;
-               JsonArray feature_weight = layer_weight[idx_feat];
-               for (int idx_weight = 0; idx_weight < feature_weight.size(); idx_weight++) {
-                sum = sum + x_[idx_weight] * feature_weight[idx_weight].as<float>();
-               }
-               y[idx_feat] = tanh(sum + layer_bias[idx_feat].as<float>());
 
+
+           for (int idx_next_feat = 0; idx_next_feat < layer_weight.size(); idx_next_feat++) {
+             Serial.println("------------------");
+              Serial.print("idx_next_feat : ");
+              Serial.println(idx_next_feat);
+               float sum = 0.0;
+               JsonArray feature_weight = layer_weight[idx_next_feat];
+               for (int idx_weight = 0; idx_weight < feature_weight.size(); idx_weight++) {
+                  Serial.println("feature_weight["+String(idx_weight)+"] : "+String(feature_weight[idx_weight].as<float>()));
+                  Serial.println("x_["+String(idx_weight)+"] : "+String(x_[idx_weight]));
+                  sum = sum + x_[idx_weight] * feature_weight[idx_weight].as<float>();
+
+               }
+               Serial.println("sum["+String(idx_next_feat)+"] : "+String(sum));
+               y[idx_next_feat] = sum + layer_bias[idx_next_feat].as<float>();
+
+               if(idx_layer < _weights.size() -1){
+                  Serial.println("tanh !!!");
+                  y[idx_next_feat] = tanhh(y[idx_next_feat]);
+               }
+               Serial.println("after activation["+String(idx_next_feat)+"] : "+
+
+               String(y[idx_next_feat]));
            }
+
            x_=y;
        }
-       free(x_);
-       x_=NULL;
-       return y;
+       /*free(x_);
+       x_=NULL;*/
+       return x_;
    }
 
 };
 
 NeuralNetwork nn;
-DynamicJsonDocument doc(5000);
+DynamicJsonDocument doc(4000);
 long loop_id = 0;
 String data = "{'bias': [[0.0, 0.0]], 'weights': [[[-0.0440443754196167, -0.30511707067489624], [-0.2248501181602478, -0.06371712684631348]]]}";
 DeserializationError error;
@@ -255,14 +277,18 @@ void loop() {
         } else {
             nn.setWeights(doc["weights"]);
             nn.setBias(doc["bias"]);
+            float* x = (float *)malloc(sizeof(float)*10);
+            for(int i=0;i<nn.size_input;i++){
+              x[i]=float(i);
+            }
 
-            float* x = (float *)malloc(sizeof(float)*2);
-            x[0]=0.7;
-            x[1]=0.5;
             float* y = nn.foward(x);
             Serial.print("y = ");
-            Serial.print(y[0]);
-            Serial.print(" ");Serial.println(y[1]);
+            for(int i=0;i <nn.size_output; i++){
+              Serial.print(y[i]);
+              Serial.print(" ");
+            }
+            Serial.println();
             Serial.print(" Reamining memory (after): ");
             Serial.println(freeMemory());
             free(y);
@@ -273,6 +299,8 @@ void loop() {
         doc.clear();
         Serial.print(" Reamining memory (after): ");
         Serial.println(freeMemory());
+            Serial.print(nn.size_output);Serial.print(nn.size_input);
+
     }
     //delay(500);
     loop_id+=1;
