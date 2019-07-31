@@ -27,7 +27,7 @@ void info(String a){
   }
 }
 
-const long BAUD = 9600;
+const long BAUD = 115200;
 
 class SerialReader {
     char *data = NULL;
@@ -66,7 +66,7 @@ public:
             info("Success !!");
             str_data = String(data);
             reset();
-            info("data=|"+str_data+"|");
+            //info("data=|"+str_data+"|");
             break;
           case 1:
             str_data = "";
@@ -148,13 +148,13 @@ private:
 SerialReader reader;
 
 
-float tanh(float x)
+/*float tanh(float x)
 {
   float x0 = exp(x);
   float x1 = 1.0 / x0;
 
   return ((x0 - x1) / (x0 + x1));
-}
+}*/
 
 
 class NeuralNetwork {
@@ -219,13 +219,14 @@ public:
 };
 
 NeuralNetwork nn;
-DynamicJsonDocument doc(200);
+DynamicJsonDocument doc(2000);
 long loop_id = 0;
 String data = "{'bias': [[0.0, 0.0]], 'weights': [[[-0.0440443754196167, -0.30511707067489624], [-0.2248501181602478, -0.06371712684631348]]]}";
 DeserializationError error;
 
 void setup() {
     Serial.begin(BAUD);
+    while(!Serial);
     reader.reset();
     info("Ready to Read on baud : "+String(BAUD));
     Serial.println(" Reamining memory (setup()): ");

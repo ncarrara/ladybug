@@ -44,7 +44,7 @@ model = NetDQN(2,2,[int(sys.argv[1])])
 model.reset()
 
 
-arduino_serial = serial.Serial('/dev/ttyACM0',9600)
+arduino_serial = serial.Serial('/dev/ttyACM0',115200)
 time.sleep(1)
 #x = json.dumps({'bias':[i for i in range(0,10)]})
 x = json.dumps(model.toJson())
