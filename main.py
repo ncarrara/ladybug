@@ -58,7 +58,7 @@ for i in range(1):
     arduino_serial.write(message)
     #arduino_serial.write("<15hello>")
 
-    # chunks = textwrap.wrap(message, 1000)
+    # chunks = textwrap.wrap(message, 100)
     # for chunk in chunks:
-    #     print("sending chunk (size={})".format(len(chunk)))
+    #     print("sending chunk (size={}) : {}".format(len(chunk),chunk))
     #     arduino_serial.write(chunk)

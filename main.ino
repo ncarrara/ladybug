@@ -219,7 +219,7 @@ public:
 };
 
 NeuralNetwork nn;
-DynamicJsonDocument doc(2000);
+DynamicJsonDocument doc(5000);
 long loop_id = 0;
 String data = "{'bias': [[0.0, 0.0]], 'weights': [[[-0.0440443754196167, -0.30511707067489624], [-0.2248501181602478, -0.06371712684631348]]]}";
 DeserializationError error;
@@ -263,6 +263,8 @@ void loop() {
             Serial.print("y = ");
             Serial.print(y[0]);
             Serial.print(" ");Serial.println(y[1]);
+            Serial.print(" Reamining memory (after): ");
+            Serial.println(freeMemory());
             free(y);
             y=NULL;
             free(x);
