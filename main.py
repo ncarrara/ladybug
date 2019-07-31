@@ -39,7 +39,7 @@ class NetDQN(BaseModule):
             "bias":bias
         }
         return nn_json
-model = NetDQN(2,2,[int(sys.argv[1])])
+model = NetDQN(10,4,[15,10])
 #model = NetDQN(2,2,[2])
 model.reset()
 
