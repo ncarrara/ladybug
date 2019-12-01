@@ -1,3 +1,3 @@
 # ladybug
 
-A dirty WIP to upload and feedfoward neural network on Arduino.
+Do inferences with Feedforward Neural Network on arduino. Train on server and upload on the board.
